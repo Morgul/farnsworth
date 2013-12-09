@@ -4,7 +4,8 @@
   "description": "A server for the working Farnsworth project.",
   "main": "farnsworth.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node farnsworth.js"
   },
   "repository": {
     "type": "git",
