@@ -18,6 +18,8 @@ function get(key, defaultValue)
 
 module.exports = {
 
+    get: get,
+
     // Put config here.
 
 }; // end exports

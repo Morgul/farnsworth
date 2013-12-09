@@ -21,6 +21,7 @@
     "url": "https://github.com/Morgul/farnsworth/issues"
   },
   "dependencies": {
-    "omega-logger": "~0.5.2"
+    "omega-logger": "~0.5.2",
+    "lodash": "~2.4.1"
   }
 }
