@@ -40,7 +40,7 @@ NMapController.prototype.findActiveHosts = function(callback)
     var self = this;
     var addresses = [];
 
-    logger.info('Scanning for active hosts.');
+    logger.info('Scanning for active hosts...');
 
     var process = exec(this.command, function(error, stdout, stderr)
     {

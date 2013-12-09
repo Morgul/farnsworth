@@ -32,6 +32,8 @@ FarnsworthServer.prototype._handleConnection = function(socket)
 
 FarnsworthServer.prototype.start = function()
 {
+    logger.info('Listening for connections on port ' + config.get('listenPort', 1313));
+
     // Start our TCP server, so other Farnsworths can talk to us.
     this.tcpServer.listen(config.get('listenPort', 1313));
 
@@ -43,7 +45,7 @@ FarnsworthServer.prototype.autodiscover = function()
 {
     var self = this;
 
-    logger.info('Starting Farnsworth autodiscovery.');
+    logger.info('Starting Farnsworth autodiscovery...');
 
     // Step 1, use nmap to determine what ip addresses are available
     nmap.findActiveHosts(function(error, active)
