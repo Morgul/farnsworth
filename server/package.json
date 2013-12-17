@@ -2,10 +2,10 @@
   "name": "farnsworth-server",
   "version": "0.1.0",
   "description": "A server for the working Farnsworth project.",
-  "main": "farnsworth.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node farnsworth.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "omega-logger": "~0.5.2",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "async": "~0.2.9"
   }
 }

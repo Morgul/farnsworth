@@ -27,7 +27,9 @@ function NMapController()
     this.timeout = 5000;
 } // end NMapController
 
-NMapController.prototype = {
+util.inherits(NMapController, EventEmitter);
+
+_.assign(NMapController.prototype, {
     get interface()
     {
         if(!this._interface)
@@ -82,9 +84,7 @@ NMapController.prototype = {
     {
         return parseInt(this.address.slice(this.address.lastIndexOf('.') + 1), 10);
     } // end addrLastByte
-}; // end prototype
-
-util.inherits(NMapController, EventEmitter);
+}); // end prototype
 
 NMapController.prototype.findActiveHosts = function(port, keepConnection)
 {
@@ -94,15 +94,23 @@ NMapController.prototype.findActiveHosts = function(port, keepConnection)
 
     async.each(_.range(1, 255), function(lastByte, done)
     {
+        function finish()
+        {
+            // Prevent double calling the callback
+            if(!keepConnection)
+            {
+                done();
+            } // end if
+        } // end finish
+
         // Skip ourselves
         if(lastByte == self.addrLastByte)
         {
-            return;
+            return done();
         } // end if
 
         var addrToCheck = self.addrPrefix + lastByte;
-
-        var client = net.connect({host: addrToCheck, port: port}, function()
+        var client = net.connect({ host: addrToCheck, port: port }, function()
         {
             if(keepConnection)
             {
@@ -114,48 +122,29 @@ NMapController.prototype.findActiveHosts = function(port, keepConnection)
             else
             {
                 activeHosts.push(addrToCheck);
-                client.end();
-            } // end if
 
+                client.end();
+                finish();
+            } // end if
         }); // end net.connect
 
         // Handle errors
         client.on('error', function(error)
         {
-            switch(error.code)
-            {
-                case 'ECONNREFUSED':
-                    status(lastByte, CONNREFUSED);
-                    break;
-                case 'EHOSTUNREACH':
-                    status(lastByte, UNREACHABLE);
-                    break;
-                case 'ETIMEDOUT':
-                    status(lastByte, ERRTIMEDOUT);
-                    break;
-                default:
-                    status(lastByte, UNKNOWN);
-                    break;
-            } // end switch
+            //console.log('[' + lastByte + '] errored.');
 
             // Cleanup
             client.end();
+            finish();
         });
 
         // Set a timeout on connections
         client.setTimeout(self.timeout, function()
         {
-            client.end();
-        });
+            //console.log('[' + lastByte + '] timedout.');
 
-        // Handle socket close
-        client.on('close', function()
-        {
-            // Prevent double calling the callback
-            if(!keepConnection)
-            {
-                done();
-            } // end if
+            client.end();
+            finish();
         });
     }, function()
     {
