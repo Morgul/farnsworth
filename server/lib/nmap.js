@@ -91,15 +91,17 @@ NMapController.prototype.findActiveHosts = function(port, keepConnection)
     var self = this;
     port = port || config.get('port', 1313);
     var activeHosts = [];
+    var finished = [];
 
     async.each(_.range(1, 255), function(lastByte, done)
     {
         function finish()
         {
             // Prevent double calling the callback
-            if(!keepConnection)
+            if(!keepConnection && !_.contains(finished, lastByte))
             {
                 done();
+                finished.push(lastByte);
             } // end if
         } // end finish
 
