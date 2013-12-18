@@ -53,21 +53,33 @@ function FarnsworthProtocol(tcpStream)
 
     // Connect message handling
     this.json_decode.on('data', this.handleMessages.bind(this));
+
+    // Add our properties
+    this._buildProperties();
 } // end FarnsworthProtocol
 
-FarnsworthProtocol.prototype = {
-    get address()
-    {
-        return this.tcp.address().address;
-    }, // end address
-
-    get port()
-    {
-        return this.tcp.address().port;
-    } // end port
-}; // end prototype
-
 util.inherits(FarnsworthProtocol, EventEmitter);
+
+FarnsworthProtocol.prototype._buildProperties = function()
+{
+    // FarnsworthProtocol.address
+    Object.defineProperty(this, 'address', {
+        enumerable: true,
+        get: function()
+        {
+            return this.tcp.address().address;
+        }
+    });
+
+    // FarnsworthProtocol.port
+    Object.defineProperty(this, 'port', {
+        enumerable: true,
+        get: function()
+        {
+            return this.tcp.address().port;
+        }
+    });
+}; // end _buildProperties
 
 FarnsworthProtocol.prototype.send = function(msg)
 {

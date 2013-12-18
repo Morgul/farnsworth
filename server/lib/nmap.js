@@ -25,66 +25,86 @@ function NMapController()
 
     // Default timeout when attempting to connect
     this.timeout = 5000;
+
+    // Add our properties
+    this._buildProperties();
 } // end NMapController
 
 util.inherits(NMapController, EventEmitter);
 
-_.assign(NMapController.prototype, {
-    get interface()
-    {
-        if(!this._interface)
+NMapController.prototype._buildProperties = function()
+{
+    // NMapController.interface
+    Object.defineProperty(this, 'interface', {
+        enumerable: true,
+        get: function()
         {
-            // Setup defaults for the various platforms.
-            switch(process.platform)
+            if(!this._interface)
             {
-                case 'win32':
+                // Setup defaults for the various platforms.
+                switch(process.platform)
                 {
-                    this._interface = 'Local Area Connection';
-                    break;
-                } // end case 'win32'
+                    case 'win32':
+                    {
+                        this._interface = 'Local Area Connection';
+                        break;
+                    } // end case 'win32'
 
-                case 'darwin':
-                {
-                    this._interface = 'en0';
-                    break;
-                } // end case 'darwin'
+                    case 'darwin':
+                    {
+                        this._interface = 'en0';
+                        break;
+                    } // end case 'darwin'
 
-                default:
-                {
-                    this._interface = 'eth0';
-                    break;
-                } // end default
-            } // end switch
-        } // end if
+                    default:
+                    {
+                        this._interface = 'eth0';
+                        break;
+                    } // end default
+                } // end switch
+            } // end if
 
-        return this._interface;
-    },
-    set interface(value)
-    {
-        this._interface = value;
-    }, // end interface
-
-    get address()
-    {
-        var interfaces = os.networkInterfaces();
-        if(this.interface in interfaces)
+            return this._interface;
+        },
+        set: function(value)
         {
-            return _.filter(interfaces[this.interface], { family: 'IPv4', internal: false })[0].address;
-        } // end if
+            this._interface = value;
+        }
+    });
 
-        return undefined;
-    }, // end address
+    // NMapController.address
+    Object.defineProperty(this, 'address', {
+        enumerable: true,
+        get: function()
+        {
+            var interfaces = os.networkInterfaces();
+            if(this.interface in interfaces)
+            {
+                return _.filter(interfaces[this.interface], { family: 'IPv4', internal: false })[0].address;
+            } // end if
 
-    get addrPrefix()
-    {
-        return this.address.slice(0, this.address.lastIndexOf('.') + 1);
-    }, // end addrPefix
+            return undefined;
+        }
+    });
 
-    get addrLastByte()
-    {
-        return parseInt(this.address.slice(this.address.lastIndexOf('.') + 1), 10);
-    } // end addrLastByte
-}); // end prototype
+    // NMapController.addrPrefix
+    Object.defineProperty(this, 'addrPrefix', {
+        enumerable: true,
+        get: function()
+        {
+            return this.address.slice(0, this.address.lastIndexOf('.') + 1);
+        }
+    });
+
+    // NMapController.addrLastByte
+    Object.defineProperty(this, 'addrLastByte', {
+        enumerable: true,
+        get: function()
+        {
+            return parseInt(this.address.slice(this.address.lastIndexOf('.') + 1), 10);
+        }
+    });
+};
 
 NMapController.prototype.findActiveHosts = function(port, keepConnection)
 {
