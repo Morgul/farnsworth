@@ -55,10 +55,13 @@ FarnsworthServer.prototype.autodiscover = function()
         {
             var farnsworth = new Farnsworth(this, socket);
 
-            // Tell it we're doing a discovery
-            farnsworth.protocol.send({
-                type: 'discovery',
-                farnsworthID: config.get('farnsworthID', 12)
+            farnsworth.on('initialized', function()
+            {
+                // Tell it we're doing a discovery
+                farnsworth.protocol.send({
+                    type: 'discovery',
+                    farnsworthID: config.get('farnsworthID', 12)
+                });
             });
         });
     }); // end on('found active hosts')

@@ -5,6 +5,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 var net = require('net');
+var util = require('util');
+var EventEmitter = require('events').EventEmitter;
 
 var _ = require('lodash');
 
@@ -17,40 +19,53 @@ var logger = require('omega-logger').loggerFor(module);
 
 function Farnsworth(server, address)
 {
+    EventEmitter.call(this);
+
     this.status = 'unknown';
     this.server = server;
 
     // Build our protocol object from whatever we got passed; this could be a string, a socket instance, or a Protocol.
-    this._buildProtocol(address);
+    this._buildProtocol(address, function()
+    {
+        // Connect event handlers
+        this._connectHandlers();
 
-    // Connect event handlers
-    this._connectHandlers();
+        this.emit('initialized');
+    }.bind(this));
 } // end Farnsworth
 
-Farnsworth.prototype._buildProtocol = function(address)
+util.inherits(Farnsworth, EventEmitter);
+
+Farnsworth.prototype._buildProtocol = function(address, done)
 {
     if(address instanceof FarnsworthProtocol)
     {
         this.status = 'connected';
-        return this.protocol = address;
-    } // end if
+        this.protocol = address;
 
-    if(address instanceof net.Socket)
+        done();
+    }
+    else if(address instanceof net.Socket)
     {
         this.status = 'connected';
-        return this.protocol = new FarnsworthProtocol(address);
-    } // end if
+        this.protocol = new FarnsworthProtocol(address);
 
-    if(address instanceof String)
+        done();
+    }
+    else if(typeof address == 'string')
     {
         var connection = net.connect({host: address, port: config.get('listenPort', 1313)}, function()
         {
             this.status = 'connected';
             this.protocol = new FarnsworthProtocol(connection);
-        }.bind(this));
-    } // end if
 
-    logger.error("Can't build protocol object for object:", logger.dump(address));
+            done();
+        }.bind(this));
+    }
+    else
+    {
+        logger.error("Can't build protocol object for object:", logger.dump(address));
+    } // end if
 };
 
 Farnsworth.prototype._connectHandlers = function()
