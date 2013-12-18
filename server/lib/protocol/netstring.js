@@ -65,7 +65,7 @@ util.inherits(NSDecodeStream, Transform);
 
 NSDecodeStream.prototype._transform = function(chunk, encoding, done)
 {
-    this.netBuf.push(chunk.toString(encoding));
+    this.netBuf.push(chunk.toString('utf8'));
     var buffer = this.netBuf.join("");
 
     while(buffer.length > 0)
