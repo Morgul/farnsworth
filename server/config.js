@@ -24,7 +24,10 @@ module.exports = {
     farnsworthID: 12,
 
     // Port to listen for connections on
-    listenPort: 1313
+    listenPort: 1313,
+
+    // Interface device
+    interface: 'en4'
 
 }; // end exports
 

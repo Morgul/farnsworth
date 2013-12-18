@@ -63,6 +63,7 @@ FarnsworthServer.prototype.autodiscover = function()
         });
     }); // end on('found active hosts')
 
+    nmap.interface = config.interface;
     nmap.findActiveHosts(config.get('listenPort', 1313));
 }; // end autodiscover
 
