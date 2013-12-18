@@ -45,6 +45,7 @@ FarnsworthServer.prototype.start = function()
 
 FarnsworthServer.prototype.autodiscover = function()
 {
+    var self = this;
     logger.info('Starting Farnsworth autodiscovery...');
 
     nmap.on('hosts found', function(hosts)
@@ -53,7 +54,7 @@ FarnsworthServer.prototype.autodiscover = function()
 
         hosts.forEach(function(socket)
         {
-            var farnsworth = new Farnsworth(this, socket);
+            var farnsworth = new Farnsworth(self, socket);
 
             farnsworth.on('initialized', function()
             {

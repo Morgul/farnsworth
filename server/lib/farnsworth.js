@@ -105,7 +105,7 @@ Farnsworth.prototype._connectHandlers = function()
 
         if(message.farnsworths || message.farnsworths == [])
         {
-            message.farnsworths.forEach(function(address, id)
+            _.forEach(message.farnsworths, function(address, id)
             {
                 if(!_.contains(this.server.farnsworths, address))
                 {
