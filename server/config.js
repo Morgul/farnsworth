@@ -20,7 +20,11 @@ module.exports = {
 
     get: get,
 
-    // Put config here.
+    // The ID of this farnsworth
+    farnsworthID: 12,
+
+    // Port to listen for connections on
+    listenPort: 1313
 
 }; // end exports
 

@@ -12,7 +12,7 @@ var JSONDecodeStream = require('./json_stream');
 
 //----------------------------------------------------------------------------------------------------------------------
 
-function Protocol(tcpStream)
+function FarnsworthProtocol(tcpStream)
 {
     EventEmitter.call(this);
 
@@ -53,9 +53,9 @@ function Protocol(tcpStream)
 
     // Connect message handling
     this.json_decode.on('data', this.handleMessages.bind(this));
-} // end Protocol
+} // end FarnsworthProtocol
 
-Protocol.prototype = {
+FarnsworthProtocol.prototype = {
     get address()
     {
         return this.tcp.address().address;
@@ -67,14 +67,14 @@ Protocol.prototype = {
     } // end port
 }; // end prototype
 
-util.inherits(Protocol, EventEmitter);
+util.inherits(FarnsworthProtocol, EventEmitter);
 
-Protocol.prototype.send = function(msg)
+FarnsworthProtocol.prototype.send = function(msg)
 {
     this.ns_encode.write(JSON.stringify(msg));
 }; // end send
 
-Protocol.prototype.handleMessages = function(message)
+FarnsworthProtocol.prototype.handleMessages = function(message)
 {
     // We just emit an event with the name of the message type, and the full message, for simplicity's sake.
     this.emit(message.type, message);
@@ -82,6 +82,6 @@ Protocol.prototype.handleMessages = function(message)
 
 //----------------------------------------------------------------------------------------------------------------------
 
-module.exports = Protocol;
+module.exports = FarnsworthProtocol;
 
 //----------------------------------------------------------------------------------------------------------------------
